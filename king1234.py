@@ -26,7 +26,6 @@ def print_tasks(tasks):
         return
 
     for task in tasks:
-
         print(
             "ID:", task[0],
             "| Subject:", task[1],
@@ -39,10 +38,9 @@ def print_tasks(tasks):
 
 
 
-def add_task():
+def add_task(*args):
 
     try:
-
         subject = input("SUBJECT: ").strip()
 
         if not subject:
@@ -69,7 +67,6 @@ def add_task():
         ).strip().capitalize()
 
         if priority not in ["High", "Medium", "Low"]:
-
             print("Invalid priority.")
             print("Please enter High, Medium or Low.")
             return
@@ -84,15 +81,14 @@ def add_task():
         print("Task added successfully.")
 
     except Exception as error:
-
         print("Something went wrong:", error)
 
 
 
-def view_task():
+
+def view_task(*args):
 
     try:
-
         tasks = get_tasks()
 
         print("\n========== ALL TASKS ==========")
@@ -100,16 +96,14 @@ def view_task():
         print_tasks(tasks)
 
     except Exception as error:
-
         print("Something went wrong:", error)
 
 
 
 
-def complete_task():
+def complete_task(*args):
 
     try:
-
         tasks = get_tasks()
 
         print("\n========== ALL TASKS ==========")
@@ -125,20 +119,20 @@ def complete_task():
 
         complete_task_db(task_id)
 
-    except ValueError:
+        print("Task completed successfully.")
 
-        print("Please enter a valid number.")
+    except ValueError:
+        print("Please enter a valid task ID.")
 
     except Exception as error:
-
         print("Something went wrong:", error)
 
 
 
-def delete_task():
+
+def delete_task(*args):
 
     try:
-
         tasks = get_tasks()
 
         print("\n========== ALL TASKS ==========")
@@ -154,40 +148,39 @@ def delete_task():
 
         delete_task_db(task_id)
 
-    except ValueError:
+        print("Task deleted successfully.")
 
-        print("Please enter a valid number.")
+    except ValueError:
+        print("Please enter a valid task ID.")
 
     except Exception as error:
-
         print("Something went wrong:", error)
 
 
 
-def get_task_count():
+
+def get_task_count(*args):
 
     try:
-
         count = count_tasks_db()
 
-        print("Total tasks:", count)
+        return count
 
     except Exception as error:
-
         print("Something went wrong:", error)
+        return 0
 
 
 
-def search_task():
+
+def search_task(*args):
 
     try:
-
         search = input(
             "Please enter your search: "
         ).strip()
 
         if not search:
-
             print("Search cannot be empty.")
             return
 
@@ -198,21 +191,19 @@ def search_task():
         print_tasks(tasks)
 
     except Exception as error:
-
         print("Something went wrong:", error)
 
 
 
-def filter_by_subject():
+
+def filter_by_subject(*args):
 
     try:
-
         subject = input(
             "Please enter your subject: "
         ).strip()
 
         if not subject:
-
             print("Subject cannot be empty.")
             return
 
@@ -223,15 +214,14 @@ def filter_by_subject():
         print_tasks(tasks)
 
     except Exception as error:
-
         print("Something went wrong:", error)
 
 
 
-def pending_task():
+
+def pending_task(*args):
 
     try:
-
         tasks = pending_tasks_db()
 
         print("\n========== PENDING TASKS ==========")
@@ -239,16 +229,14 @@ def pending_task():
         print_tasks(tasks)
 
     except Exception as error:
-
         print("Something went wrong:", error)
 
 
 
 
-def completed_task():
+def completed_task(*args):
 
     try:
-
         tasks = completed_tasks_db()
 
         print("\n========== COMPLETED TASKS ==========")
@@ -256,16 +244,14 @@ def completed_task():
         print_tasks(tasks)
 
     except Exception as error:
-
         print("Something went wrong:", error)
 
 
 
 
-def priority_medium():
+def priority_medium(*args):
 
     try:
-
         tasks = medium_priority_db()
 
         print("\n========== MEDIUM PRIORITY ==========")
@@ -273,16 +259,13 @@ def priority_medium():
         print_tasks(tasks)
 
     except Exception as error:
-
         print("Something went wrong:", error)
 
 
 
-
-def priority_low():
+def priority_low(*args):
 
     try:
-
         tasks = low_priority_db()
 
         print("\n========== LOW PRIORITY ==========")
@@ -290,28 +273,25 @@ def priority_low():
         print_tasks(tasks)
 
     except Exception as error:
-
         print("Something went wrong:", error)
 
 
 
-def task_deadline():
+
+def task_deadline(*args):
 
     try:
-
         date = input(
             "Enter deadline (DD-MM-YYYY): "
         ).strip()
 
         try:
-
             datetime.strptime(
                 date,
                 "%d-%m-%Y"
             )
 
         except ValueError:
-
             print("Invalid date.")
             print("Please use DD-MM-YYYY format.")
             return
@@ -323,20 +303,17 @@ def task_deadline():
         print_tasks(tasks)
 
     except Exception as error:
-
         print("Something went wrong:", error)
 
 
 
 
-def study_statics():
+def study_statics(*args):
 
     try:
-
         tasks = get_tasks()
 
         if not tasks:
-
             print("No tasks available.")
             return
 
@@ -363,53 +340,43 @@ def study_statics():
             priority = task[4]
             date = task[3]
 
-            # Status
+            
 
-            if status == "completed":
-
+            if status.lower() == "completed":
                 completed += 1
 
-            elif status == "pending":
-
+            elif status.lower() == "pending":
                 pending += 1
 
-            # Priority
+          
 
             if priority == "High":
-
                 high += 1
 
             elif priority == "Medium":
-
                 medium += 1
 
             elif priority == "Low":
-
                 low += 1
 
-            # Date
+            
 
             try:
-
                 task_date = datetime.strptime(
                     date,
                     "%d-%m-%Y"
                 ).date()
 
-                if task_date < today and status == "pending":
-
+                if task_date < today and status.lower() == "pending":
                     overdue += 1
 
                 elif task_date == today:
-
                     due_today += 1
 
                 elif task_date == tomorrow:
-
                     due_tomorrow += 1
 
             except ValueError:
-
                 continue
 
         progress = (completed / total) * 100
@@ -442,21 +409,19 @@ def study_statics():
 """)
 
     except Exception as error:
-
         print("Something went wrong:", error)
 
 
 
-def upcoming_tasks():
+
+def upcoming_tasks(*args):
 
     try:
-
         tasks = upcoming_tasks_db()
 
         print("\n========== UPCOMING TASKS ==========")
 
         if not tasks:
-
             print("No upcoming tasks.")
             return
 
@@ -467,13 +432,15 @@ def upcoming_tasks():
         for task in tasks:
 
             try:
-
                 task_date = datetime.strptime(
                     task[3],
                     "%d-%m-%Y"
                 ).date()
 
-                if task_date >= today and task[5] == "pending":
+                if (
+                    task_date >= today
+                    and task[5].lower() == "pending"
+                ):
 
                     print(
                         "ID:", task[0],
@@ -486,13 +453,10 @@ def upcoming_tasks():
                     found = True
 
             except ValueError:
-
                 continue
 
         if not found:
-
             print("No upcoming tasks.")
 
     except Exception as error:
-
         print("Something went wrong:", error)

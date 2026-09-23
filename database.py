@@ -4,39 +4,28 @@ import sqlite3
 DATABASE_NAME = "study_planner.db"
 
 
+
+
 def connect_db():
     return sqlite3.connect(DATABASE_NAME)
 
 
 def create_table():
-    connection = connect_db()
-    cursor = connection.cursor()
 
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tasks (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            subject TEXT NOT NULL,
-            task TEXT NOT NULL,
-            date TEXT NOT NULL,
-            priority TEXT NOT NULL,
-            status TEXT NOT NULL
-        )
-    """)
-
-    connection.commit()
-    connection.close()
-
-
-def add_task_db(subject, task, date, priority):
     try:
         connection = connect_db()
         cursor = connection.cursor()
 
         cursor.execute("""
-            INSERT INTO tasks
-            (subject, task, date, priority, status)
-            VALUES (?, ?, ?, ?, ?)
-        """, (subject, task, date, priority, "pending"))
+            CREATE TABLE IF NOT EXISTS tasks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                subject TEXT NOT NULL,
+                task TEXT NOT NULL,
+                date TEXT NOT NULL,
+                priority TEXT NOT NULL,
+                status TEXT NOT NULL
+            )
+        """)
 
         connection.commit()
         connection.close()
@@ -45,7 +34,37 @@ def add_task_db(subject, task, date, priority):
         print("Database error:", error)
 
 
+
+
+def add_task_db(subject, task, date, priority):
+
+    try:
+        connection = connect_db()
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            INSERT INTO tasks
+            (subject, task, date, priority, status)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            subject,
+            task,
+            date,
+            priority,
+            "pending"
+        ))
+
+        connection.commit()
+        connection.close()
+
+    except sqlite3.Error as error:
+        print("Database error:", error)
+
+
+
+
 def get_tasks():
+
     try:
         connection = connect_db()
         cursor = connection.cursor()
@@ -53,6 +72,7 @@ def get_tasks():
         cursor.execute("""
             SELECT id, subject, task, date, priority, status
             FROM tasks
+            ORDER BY id
         """)
 
         tasks = cursor.fetchall()
@@ -66,7 +86,10 @@ def get_tasks():
         return []
 
 
+
+
 def complete_task_db(task_id):
+
     try:
         connection = connect_db()
         cursor = connection.cursor()
@@ -79,8 +102,10 @@ def complete_task_db(task_id):
 
         if cursor.rowcount == 0:
             print("Task ID does not exist.")
+
         else:
             connection.commit()
+            print("Task marked as completed.")
 
         connection.close()
 
@@ -88,7 +113,10 @@ def complete_task_db(task_id):
         print("Database error:", error)
 
 
+
+
 def delete_task_db(task_id):
+
     try:
         connection = connect_db()
         cursor = connection.cursor()
@@ -100,8 +128,10 @@ def delete_task_db(task_id):
 
         if cursor.rowcount == 0:
             print("Task ID does not exist.")
+
         else:
             connection.commit()
+            print("Task deleted successfully.")
 
         connection.close()
 
@@ -110,11 +140,15 @@ def delete_task_db(task_id):
 
 
 def count_tasks_db():
+
     try:
         connection = connect_db()
         cursor = connection.cursor()
 
-        cursor.execute("SELECT COUNT(*) FROM tasks")
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM tasks
+        """)
 
         count = cursor.fetchone()[0]
 
@@ -127,10 +161,15 @@ def count_tasks_db():
         return 0
 
 
+
+
 def search_task_db(keyword):
+
     try:
         connection = connect_db()
         cursor = connection.cursor()
+
+        keyword = f"%{keyword}%"
 
         cursor.execute("""
             SELECT id, subject, task, date, priority, status
@@ -140,12 +179,13 @@ def search_task_db(keyword):
                OR date LIKE ?
                OR priority LIKE ?
                OR status LIKE ?
+            ORDER BY id
         """, (
-            f"%{keyword}%",
-            f"%{keyword}%",
-            f"%{keyword}%",
-            f"%{keyword}%",
-            f"%{keyword}%"
+            keyword,
+            keyword,
+            keyword,
+            keyword,
+            keyword
         ))
 
         tasks = cursor.fetchall()
@@ -159,7 +199,9 @@ def search_task_db(keyword):
         return []
 
 
+
 def filter_subject_db(subject):
+
     try:
         connection = connect_db()
         cursor = connection.cursor()
@@ -168,6 +210,7 @@ def filter_subject_db(subject):
             SELECT id, subject, task, date, priority, status
             FROM tasks
             WHERE subject LIKE ?
+            ORDER BY id
         """, (f"%{subject}%",))
 
         tasks = cursor.fetchall()
@@ -181,7 +224,10 @@ def filter_subject_db(subject):
         return []
 
 
+
+
 def pending_tasks_db():
+
     try:
         connection = connect_db()
         cursor = connection.cursor()
@@ -190,6 +236,7 @@ def pending_tasks_db():
             SELECT id, subject, task, date, priority, status
             FROM tasks
             WHERE status = 'pending'
+            ORDER BY id
         """)
 
         tasks = cursor.fetchall()
@@ -203,7 +250,9 @@ def pending_tasks_db():
         return []
 
 
+
 def completed_tasks_db():
+
     try:
         connection = connect_db()
         cursor = connection.cursor()
@@ -212,6 +261,7 @@ def completed_tasks_db():
             SELECT id, subject, task, date, priority, status
             FROM tasks
             WHERE status = 'completed'
+            ORDER BY id
         """)
 
         tasks = cursor.fetchall()
@@ -225,7 +275,9 @@ def completed_tasks_db():
         return []
 
 
+
 def medium_priority_db():
+
     try:
         connection = connect_db()
         cursor = connection.cursor()
@@ -234,6 +286,7 @@ def medium_priority_db():
             SELECT id, subject, task, date, priority, status
             FROM tasks
             WHERE priority = 'Medium'
+            ORDER BY id
         """)
 
         tasks = cursor.fetchall()
@@ -247,7 +300,10 @@ def medium_priority_db():
         return []
 
 
+
+
 def low_priority_db():
+
     try:
         connection = connect_db()
         cursor = connection.cursor()
@@ -256,6 +312,7 @@ def low_priority_db():
             SELECT id, subject, task, date, priority, status
             FROM tasks
             WHERE priority = 'Low'
+            ORDER BY id
         """)
 
         tasks = cursor.fetchall()
@@ -269,7 +326,9 @@ def low_priority_db():
         return []
 
 
+
 def deadline_tasks_db(date):
+
     try:
         connection = connect_db()
         cursor = connection.cursor()
@@ -278,6 +337,7 @@ def deadline_tasks_db(date):
             SELECT id, subject, task, date, priority, status
             FROM tasks
             WHERE date = ?
+            ORDER BY id
         """, (date,))
 
         tasks = cursor.fetchall()
@@ -291,7 +351,9 @@ def deadline_tasks_db(date):
         return []
 
 
+
 def upcoming_tasks_db():
+
     try:
         connection = connect_db()
         cursor = connection.cursor()
@@ -300,6 +362,7 @@ def upcoming_tasks_db():
             SELECT id, subject, task, date, priority, status
             FROM tasks
             WHERE status = 'pending'
+            ORDER BY id
         """)
 
         tasks = cursor.fetchall()
@@ -311,3 +374,8 @@ def upcoming_tasks_db():
     except sqlite3.Error as error:
         print("Database error:", error)
         return []
+
+
+
+
+create_table()
