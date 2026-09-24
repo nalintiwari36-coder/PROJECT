@@ -1,1 +1,1 @@
-docker pull ruvnet/wifi-densepose:latest
+.
